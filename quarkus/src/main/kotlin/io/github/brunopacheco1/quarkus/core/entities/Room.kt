@@ -1,14 +1,15 @@
 package io.github.brunopacheco1.quarkus.core.entities
 
-data class Room {
-    number: number;
-    type: RoomType;
-    price: number;
-    reservations: Reservation[];
-}
+data class Room (
+    var id: String?,
+    var roomNumber: Double,
+    var type: RoomType,
+    var price: Double,
+    var reservations: List<Reservation>
+)
 
-enum RoomType {
-    SINGLE; 
-    DOUBLE;
+enum class RoomType {
+    SINGLE, 
+    DOUBLE,
     DELUXE;
 }

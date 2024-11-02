@@ -1,9 +1,11 @@
 package io.github.brunopacheco1.quarkus.core.entities
 
-data class Reservation {
-    id?: String;
-    room: number;
-    checkin: Date;
-    checkout: Date;
-    totalPrice: number;
-}
+import java.time.LocalDate
+
+data class Reservation(
+    var id: String?,
+    var room: Int,
+    var checkin: LocalDate,
+    var checkout: LocalDate,
+    var totalPrice: Double
+)
