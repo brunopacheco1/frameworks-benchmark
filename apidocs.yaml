@@ -1,0 +1,185 @@
+openapi: 3.0.3
+info:
+  title: Fake Hotel API
+  description: |-
+    This is a fake Hotel API, to test a couple use cases to read and write data from/to a database.
+    
+    The idea is to write the same API in several different frameworks, and run a stress test. Please check the list below:
+    - [Quarkus.jvm](https://quarkus.io/)
+    - [Quarkus.native](https://quarkus.io/)
+    - [Next.js](https://nextjs.org/)
+    - [Nest.js](https://nestjs.com/)
+    - [Encore.ts](https://encore.dev/docs/ts)
+    - [.Net](https://learn.microsoft.com/en-us/dotnet)
+    - [GoMicro](https://github.com/micro/go-micro)
+    - [Encore.go](https://encore.dev/docs/go)
+    
+    Some useful links:
+    - [The repository](https://github.com/brunopacheco1/frameworks-benchmark)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: brunopacheco1@yahoo.com
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+  version: 0.0.0
+servers:
+  - url: http://localhost:8000
+tags:
+  - name: query
+  - name: command
+paths:
+  /api/v1/rooms:
+    post:
+      tags:
+        - command
+      summary: Add rooms to database
+      operationId: createRoom
+      requestBody:
+        description: Add room
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddRoomCommand'
+        required: true
+      responses:
+        201:
+          description: Created
+        400:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Not expected exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/rooms/search:
+    post:
+      tags:
+        - query
+      summary: Search for rooms
+      operationId: searchRooms
+      requestBody:
+        description: search room
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRoomQuery'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RetrievedRoom'
+        500:
+          description: Not expected exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/rooms/reserve:
+    post:
+      tags:
+        - command
+      summary: Reserve room
+      operationId: reserveRoom
+      requestBody:
+        description: Reserve room
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReserveRoomCommand'
+        required: true
+      responses:
+        201:
+          description: Created
+        400:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Not expected exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    AddRoomCommand:
+      type: object
+      properties:
+        roomNumber:
+          type: integer
+        roomType:
+          type: string
+          enum: [SINGLE, DOUBLE, DELUXE]
+        price:
+          type: number
+      required:
+        - roomNumber
+        - roomType
+        - price
+    SearchRoomQuery:
+      type: object
+      properties:
+        roomType:
+          type: string
+          enum: [SINGLE, DOUBLE, DELUXE]
+        minPrice:
+          type: number
+        maxPrice:
+          type: number
+    RetrievedRoom:
+      type: object
+      properties:
+        id:
+          type: string
+        roomNumber:
+          type: integer
+        roomType:
+          type: string
+          enum: [SINGLE, DOUBLE, DELUXE]
+        price:
+          type: number
+      required:
+        - id
+        - roomNumber
+        - roomType
+        - price
+    ReserveRoomCommand:
+      type: object
+      properties:
+        roomId:
+          type: string
+        checkin:
+          type: string
+          format: date-time
+        checkout:
+          type: string
+          format: date-time
+        totalPrice:
+          type: number
+      required:
+        - room
+        - checkin
+        - checkout
+        - totalPrice
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
